@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Final Project Demo - AI Agent CLI</title>
+    <style>
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #121212; color: white; display: flex; flex-direction: column; height: 100vh; }
+        .header { background: #007aff; padding: 10px 20px; font-weight: bold; text-align: center; }
+        .section-title { background: #333; padding: 5px 20px; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: #aaa; }
+        .code-viewer { height: 40%; background: #1e1e1e; padding: 20px; overflow-y: auto; font-family: monospace; font-size: 13px; color: #d4d4d4; }
+        .web-preview { height: 60%; background: #fff; position: relative; }
+        iframe { width: 100%; height: 100%; border: none; }
+        pre { margin: 0; white-space: pre-wrap; }
+    </style>
+</head>
+<body>
+    <div class="header">Assignment 02 — AI Agent CLI Tool Demo</div>
+    
+    <div class="section-title">Step 1: Code Review (index.js - Agent Logic)</div>
+    <div class="code-viewer" id="code-viewer">
+        <pre id="code-content"></pre>
+    </div>
+
+    <div class="section-title">Step 2: Cloned Output (Scaler Academy Website)</div>
+    <div class="web-preview">
+        <iframe src="scaler_clone/index.html"></iframe>
+    </div>
+
+    <script>
+        const code = `import readline from "readline";
+import { exec } from "child_process";
+import fs from "fs/promises";
+
+// Agent reasoning loop implementation...
+async function agent(userInput) {
+    const messages = [{ role: "system", content: system_prompt }, { role: "user", content: userInput }];
+    while (true) {
+        let content = await queryGemini(messages);
+        const parsedContent = JSON.parse(content);
+        
+        console.log(\`[THINK] \${parsedContent.content}\`);
+        
+        if (parsedContent.step === "TOOL") {
+            const result = await tool_map[parsedContent.tool_name](parsedContent.tool_args);
+            messages.push({ role: "developer", content: JSON.stringify({ step: "OBSERVE", content: result }) });
+        }
+        
+        if (parsedContent.step === "OUTPUT") break;
+    }
+}`;
+        document.getElementById('code-content').textContent = code;
+        
+        // Auto scroll code
+        const viewer = document.getElementById('code-viewer');
+        setTimeout(() => {
+            let scrollPos = 0;
+            const scroll = setInterval(() => {
+                viewer.scrollTop = scrollPos;
+                scrollPos += 1;
+                if (scrollPos > viewer.scrollHeight - viewer.clientHeight) clearInterval(scroll);
+            }, 30);
+        }, 2000);
+    </script>
+</body>
+</html>

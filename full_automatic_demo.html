@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Agent CLI - Full Automatic Demo</title>
+    <style>
+        body { margin: 0; font-family: 'Inter', sans-serif; background: #000; color: white; height: 100vh; overflow: hidden; }
+        
+        /* Terminal Styles */
+        .terminal { 
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%; 
+            padding: 40px; box-sizing: border-box; font-family: 'Courier New', Courier, monospace; 
+            font-size: 16px; transition: all 1s ease; z-index: 10; background: #000;
+        }
+        .terminal.minimized { width: 40%; height: 100%; border-right: 2px solid #333; font-size: 12px; padding: 20px; }
+        
+        /* Preview Styles */
+        .preview { 
+            position: absolute; top: 0; right: 0; width: 60%; height: 100%; 
+            background: #fff; transform: translateX(100%); transition: transform 1s ease; z-index: 5;
+        }
+        .preview.visible { transform: translateX(0); }
+        iframe { width: 100%; height: 100%; border: none; }
+
+        /* Step colors */
+        .step-START { color: #00bcd4; font-weight: bold; }
+        .step-THINK { color: #ff9800; }
+        .step-TOOL { color: #4caf50; }
+        .step-OBSERVE { color: #9c27b0; }
+        .step-OUTPUT { color: #ffeb3b; font-weight: bold; }
+        
+        .line { margin-bottom: 15px; opacity: 0; transform: translateY(10px); animation: fadeIn 0.5s forwards; }
+        @keyframes fadeIn { to { opacity: 1; transform: translateY(0); } }
+        
+        .header-bar { background: #333; padding: 5px 15px; margin-bottom: 20px; font-size: 12px; color: #888; border-radius: 5px; }
+        .cursor { display: inline-block; width: 10px; height: 20px; background: #0f0; animation: blink 1s infinite; vertical-align: middle; }
+        @keyframes blink { 50% { opacity: 0; } }
+    </style>
+</head>
+<body>
+    <div class="terminal" id="terminal">
+        <div class="header-bar">AI-AGENT-CLI -- status: active -- model: gemini-2.0-flash</div>
+        <div id="output"></div>
+        <span class="cursor" id="cursor"></span>
+    </div>
+
+    <div class="preview" id="preview">
+        <iframe src="scaler_clone/index.html"></iframe>
+    </div>
+
+    <script>
+        const terminal = document.getElementById('terminal');
+        const output = document.getElementById('output');
+        const preview = document.getElementById('preview');
+        const cursor = document.getElementById('cursor');
+        
+        const script = [
+            { s: 'START', m: 'Instruction: Clone the Scaler Academy website.' },
+            { s: 'THINK', m: 'Breaking down the task into modules: Navigation, Hero Section, and Footer.' },
+            { s: 'THINK', m: 'I will use a modern CSS Grid/Flexbox approach with Inter typography.' },
+            { s: 'TOOL', m: 'executeCommand("mkdir -p scaler_clone")' },
+            { s: 'OBSERVE', m: 'Success: Directory created.' },
+            { s: 'THINK', m: 'Now writing the core HTML structure with semantic tags.' },
+            { s: 'TOOL', m: 'writeFile("scaler_clone/index.html", content...)' },
+            { s: 'OBSERVE', m: 'Success: index.html saved.' },
+            { s: 'THINK', m: 'Implementing Scaler brand identity (Blue #007aff) in CSS.' },
+            { s: 'TOOL', m: 'writeFile("scaler_clone/style.css", content...)' },
+            { s: 'OBSERVE', m: 'Success: style.css saved.' },
+            { s: 'THINK', m: 'Finalizing with script.js for interactive CTA buttons.' },
+            { s: 'TOOL', m: 'writeFile("scaler_clone/script.js", content...)' },
+            { s: 'OBSERVE', m: 'Success: script.js saved.' },
+            { s: 'OUTPUT', m: 'Website clone complete! Opening preview now...' }
+        ];
+
+        let index = 0;
+        function playScript() {
+            if (index < script.length) {
+                const line = document.createElement('div');
+                line.className = 'line';
+                const s = script[index];
+                line.innerHTML = `<span class="step-${s.s}">[${s.s}]</span> ${s.m}`;
+                output.appendChild(line);
+                
+                // Scroll to bottom
+                terminal.scrollTop = terminal.scrollHeight;
+                
+                // When we reach OUTPUT, trigger the transition
+                if (s.s === 'OUTPUT') {
+                    setTimeout(() => {
+                        terminal.classList.add('minimized');
+                        preview.classList.add('visible');
+                    }, 1500);
+                }
+
+                index++;
+                setTimeout(playScript, index === script.length ? 3000 : 2000);
+            }
+        }
+
+        // Start after a short delay
+        setTimeout(playScript, 1000);
+    </script>
+</body>
+</html>
