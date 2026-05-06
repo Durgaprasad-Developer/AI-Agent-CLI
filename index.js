@@ -19,7 +19,7 @@ const GEMINI_API_KEY = process.env.GEMINI_API_KEY || "AIzaSyCj8TmhKz-2uV6rKWhwj0
 async function queryGemini(messages) {
     if (!GEMINI_API_KEY) throw new Error("Missing GEMINI_API_KEY");
     
-    // Using gemini-2.0-flash as seen in models list
+    // Using gemini-2.0-flash which exists and was recognized (returned 429 quota error)
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${GEMINI_API_KEY}`;
     
     const contents = messages.filter(m => m.role !== "system").map(m => ({
